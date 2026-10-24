@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frosty Dreams | Artisanal Ice Cream Parlor</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins & Pacifico -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FDFBF7',
+                        softPink: '#FFD1DC',
+                        mintGreen: '#E2F0D9',
+                        choco: '#4A3525',
+                        strawberry: '#FF6B8B',
+                        buttercup: '#FFF1C1',
+                        lavender: '#E8D7F1'
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                        display: ['Pacifico', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-shadow {
+            box-shadow: 0 10px 30px -10px rgba(74, 53, 37, 0.1);
+        }
+        .hero-pattern {
+            background-color: #FDFBF7;
+            background-image: radial-gradient(#FFD1DC 1.5px, transparent 1.5px), radial-gradient(#E2F0D9 1.5px, #FDFBF7 1.5px);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FDFBF7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FFD1DC;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FF6B8B;
+        }
+    </style>
+</head>
+<body class="bg-cream text-choco font-sans antialiased selection:bg-softPink selection:text-choco">
+
+    <!-- Notification Banner / Modal (Custom Box instead of alert) -->
+    <div id="notification-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl p-8 max-w-sm mx-4 text-center shadow-2xl transform scale-95 transition-transform duration-300" id="modal-content">
+            <div id="modal-icon" class="w-16 h-16 bg-softPink rounded-full flex items-center justify-center mx-auto mb-4 text-strawberry">
+                <i data-lucide="check-circle" class="w-8 h-8"></i>
+            </div>
+            <h3 id="modal-title" class="text-2xl font-bold font-display mb-2 text-choco">Success!</h3>
+            <p id="modal-message" class="text-gray-600 mb-6 text-sm">Your order has been placed successfully. Get ready for sweetness!</p>
+            <button onclick="closeModal()" class="w-full bg-strawberry text-white py-3 rounded-full font-semibold hover:bg-opacity-90 transition shadow-md">
+                Awesome!
+            </button>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header class="fixed top-0 left-0 right-0 z-40 bg-cream/90 backdrop-blur-md border-b border-softPink/40 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 group">
+                <div class="w-10 h-10 bg-softPink rounded-full flex items-center justify-center text-strawberry group-hover:rotate-12 transition-transform duration-300 shadow-sm">
+                    <i data-lucide="ice-cream-2" class="w-6 h-6"></i>
+                </div>
+                <span class="font-display text-2xl sm:text-3xl text-strawberry tracking-wide">Frosty Dreams</span>
+            </a>
+            
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex items-center gap-8 font-medium">
+                <a href="#hero" class="hover:text-strawberry transition">Home</a>
+                <a href="#about" class="hover:text-strawberry transition">Our Story</a>
+                <a href="#menu" class="hover:text-strawberry transition">Menu</a>
+                <a href="#builder" class="hover:text-strawberry transition">Sundae Builder</a>
+                <a href="#reviews" class="hover:text-strawberry transition">Reviews</a>
+                <a href="#contact" class="hover:text-strawberry transition">Contact</a>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <a href="#builder" class="hidden sm:inline-flex items-center gap-2 bg-strawberry text-white px-5 py-2.5 rounded-full font-medium hover:bg-opacity-90 transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span>Order Now</span>
+                </a>
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-xl text-choco hover:bg-softPink/30 transition">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Nav Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-cream border-b border-softPink px-4 pt-2 pb-6 space-y-3 shadow-xl">
+            <a href="#hero" class="block py-2 px-3 rounded-lg hover:bg-softPink/30 font-medium">Home</a>
+            <a href="#about" class="block py-2 px-3 rounded-lg hover:bg-softPink/30 font-medium">Our Story</a>
+            <a href="#menu" class="block py-2 px-3 rounded-lg hover:bg-softPink/30 font-medium">Menu</a>
+            <a href="#builder" class="block py-2 px-3 rounded-lg hover:bg-softPink/30 font-medium">Sundae Builder</a>
+            <a href="#reviews" class="block py-2 px-3 rounded-lg hover:bg-softPink/30 font-medium">Reviews</a>
+            <a href="#contact" class="block py-2 px-3 rounded-lg hover:bg-softPink/30 font-medium">Contact</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero-pattern pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6 text-center md:text-left">
+                    <div class="inline-flex items-center gap-2 bg-softPink/60 text-strawberry px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide">
+                        <i data-lucide="heart" class="w-4 h-4 fill-strawberry"></i> 100% Artisanal & Handcrafted Daily
+                    </div>
+                    <h1 class="text-4xl sm:text-6xl lg:text-7xl font-display font-bold leading-tight text-choco">
+                        Scoops of <span class="text-strawberry">Pure Happiness</span>
+                    </h1>
+                    <p class="text-gray-600 text-base sm:text-lg max-w-lg mx-auto md:mx-0">
+                        Experience creamy handcrafted ice cream made with locally sourced organic milk, real fruit, and decadent mix-ins. Every scoop tells a sweet story.
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
+                        <a href="#menu" class="w-full sm:w-auto bg-strawberry text-white px-8 py-4 rounded-full font-semibold hover:bg-opacity-90 transition shadow-lg hover:shadow-xl text-center">
+                            Explore Menu
+                        </a>
+                        <a href="#builder" class="w-full sm:w-auto bg-mintGreen text-choco border-2 border-mintGreen hover:border-emerald-300 px-8 py-4 rounded-full font-semibold transition text-center">
+                            Build Your Sundae
+                        </a>
+                    </div>
+                    <!-- Quick stats -->
+                    <div class="grid grid-cols-3 gap-4 pt-8 border-t border-softPink/60 max-w-md mx-auto md:mx-0">
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-bold font-display text-strawberry">30+</p>
+                            <p class="text-xs sm:text-sm text-gray-500">Flavors</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-bold font-display text-choco">100%</p>
+                            <p class="text-xs sm:text-sm text-gray-500">Organic Dairy</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-bold font-display text-strawberry">4.9★</p>
+                            <p class="text-xs sm:text-sm text-gray-500">Rating</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Image Illustration / Card Stack -->
+                <div class="relative flex items-center justify-center">
+                    <div class="absolute w-72 h-72 sm:w-96 sm:h-96 bg-softPink rounded-full filter blur-3xl opacity-50 -z-10 animate-pulse"></div>
+                    <div class="relative w-full max-w-md bg-white rounded-3xl p-6 custom-shadow border-4 border-softPink">
+                        <div class="relative h-64 sm:h-80 rounded-2xl overflow-hidden mb-6 bg-gradient-to-br from-softPink to-lavender flex items-center justify-center group">
+                            <img src="https://placehold.co/600x400/FFD1DC/4A3525?text=Artisanal+Sundae" alt="Delicious Sundae" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-strawberry flex items-center gap-1 shadow">
+                                <i data-lucide="star" class="w-3.5 h-3.5 fill-strawberry"></i> Bestseller
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-xl font-bold font-display">Berry Velvet Dream</h3>
+                                <p class="text-sm text-gray-500">Madagascar vanilla bean with wild strawberry swirl & gold flakes.</p>
+                            </div>
+                            <span class="text-lg font-bold text-strawberry">$6.50</span>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                            <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">Available Today</span>
+                            <button onclick="quickAdd('Berry Velvet Dream', 6.50)" class="bg-choco text-cream px-4 py-2 rounded-xl text-sm font-medium hover:bg-strawberry transition flex items-center gap-1.5">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-4">
+                        <img src="https://placehold.co/400x500/E2F0D9/4A3525?text=Fresh+Cream" alt="Fresh Cream" class="rounded-3xl shadow-md w-full h-64 object-cover">
+                        <img src="https://placehold.co/400x300/FFF1C1/4A3525?text=Handmade" alt="Handmade Scoops" class="rounded-3xl shadow-md w-full h-44 object-cover">
+                    </div>
+                    <div class="space-y-4 pt-8">
+                        <img src="https://placehold.co/400x300/FFD1DC/4A3525?text=Local+Berries" alt="Local Berries" class="rounded-3xl shadow-md w-full h-44 object-cover">
+                        <img src="https://placehold.co/400x500/E8D7F1/4A3525?text=Parlor+Vibe" alt="Parlor Vibe" class="rounded-3xl shadow-md w-full h-64 object-cover">
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <div class="inline-flex items-center gap-2 bg-mintGreen text-emerald-800 px-4 py-1.5 rounded-full text-sm font-semibold">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i> Our Sweet Story
+                    </div>
+                    <h2 class="text-3xl sm:text-5xl font-display font-bold text-choco">
+                        Crafting Memories One Scoop at a Time
+                    </h2>
+                    <p class="text-gray-600 leading-relaxed">
+                        Founded in 2018, Frosty Dreams began with a simple passion: to recreate the magic of old-world ice cream parlors using modern artisanal techniques. We churn our small batches daily using pasture-raised local cream, single-origin chocolates, and hand-picked seasonal fruits.
+                    </p>
+                    <div class="grid grid-cols-2 gap-6 pt-2">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-2xl bg-softPink flex items-center justify-center text-strawberry shrink-0">
+                                <i data-lucide="check" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-choco">No Artificial Additives</h4>
+                                <p class="text-xs text-gray-500">Pure clean ingredients only.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-2xl bg-mintGreen flex items-center justify-center text-emerald-700 shrink-0">
+                                <i data-lucide="leaf" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-choco">Eco-Friendly Cups</h4>
+                                <p class="text-xs text-gray-500">100% biodegradable packaging.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Menu Section -->
+    <section id="menu" class="py-20 bg-cream">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12 space-y-4">
+                <span class="text-strawberry font-semibold uppercase tracking-wider text-sm bg-softPink/50 px-4 py-1 rounded-full">Our Delicious Offerings</span>
+                <h2 class="text-3xl sm:text-5xl font-display font-bold text-choco">Explore Our Menu</h2>
+                <p class="text-gray-600">From timeless classics to vegan innovations and rich milkshakes, there's a dream flavor for everyone.</p>
+            </div>
+
+            <!-- Category Filter Tabs -->
+            <div class="flex flex-wrap justify-center gap-3 mb-12" id="menu-tabs">
+                <button onclick="filterMenu('all')" class="menu-tab active px-6 py-2.5 rounded-full font-medium transition bg-strawberry text-white shadow-md">All Items</button>
+                <button onclick="filterMenu('classic')" class="menu-tab px-6 py-2.5 rounded-full font-medium transition bg-white text-choco hover:bg-softPink/50 shadow-sm">Classic Scoops</button>
+                <button onclick="filterMenu('sundae')" class="menu-tab px-6 py-2.5 rounded-full font-medium transition bg-white text-choco hover:bg-softPink/50 shadow-sm">Signature Sundaes</button>
+                <button onclick="filterMenu('vegan')" class="menu-tab px-6 py-2.5 rounded-full font-medium transition bg-white text-choco hover:bg-softPink/50 shadow-sm">Vegan Delights</button>
+                <button onclick="filterMenu('shake')" class="menu-tab px-6 py-2.5 rounded-full font-medium transition bg-white text-choco hover:bg-softPink/50 shadow-sm">Milkshakes</button>
+            </div>
+
+            <!-- Menu Grid -->
+            <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Dynamically populated via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Sundae Builder Section -->
+    <section id="builder" class="py-20 bg-white relative overflow-hidden">
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-buttercup rounded-full filter blur-3xl opacity-40 -z-10"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16 space-y-4">
+                <span class="text-amber-700 font-semibold uppercase tracking-wider text-sm bg-buttercup px-4 py-1 rounded-full">Custom Creation</span>
+                <h2 class="text-3xl sm:text-5xl font-display font-bold text-choco">Build Your Own Sundae</h2>
+                <p class="text-gray-600">Mix and match your favorite base ice creams, gourmet toppings, and delicious drizzles. Watch your creation come to life!</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+                <!-- Builder Controls (2 Columns) -->
+                <div class="lg:col-span-2 space-y-8 bg-cream p-6 sm:p-8 rounded-3xl border border-softPink/60 custom-shadow">
+                    
+                    <!-- Step 1: Base Scoop -->
+                    <div>
+                        <h3 class="text-lg font-bold font-display mb-4 text-choco flex items-center gap-2">
+                            <span class="w-7 h-7 bg-strawberry text-white rounded-full flex items-center justify-center text-sm">1</span>
+                            Choose Your Base Ice Cream (Max 3 Scoops)
+                        </h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="builder-bases">
+                            <!-- JS populated -->
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Toppings -->
+                    <div>
+                        <h3 class="text-lg font-bold font-display mb-4 text-choco flex items-center gap-2">
+                            <span class="w-7 h-7 bg-strawberry text-white rounded-full flex items-center justify-center text-sm">2</span>
+                            Select Toppings (Choose any)
+                        </h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="builder-toppings">
+                            <!-- JS populated -->
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Drizzle -->
+                    <div>
+                        <h3 class="text-lg font-bold font-display mb-4 text-choco flex items-center gap-2">
+                            <span class="w-7 h-7 bg-strawberry text-white rounded-full flex items-center justify-center text-sm">3</span>
+                            Select Drizzle (Choose 1)
+                        </h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="builder-drizzles">
+                            <!-- JS populated -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Summary Card (1 Column) -->
+                <div class="bg-gradient-to-br from-softPink/40 to-mintGreen/40 p-6 sm:p-8 rounded-3xl border-2 border-softPink custom-shadow sticky top-28">
+                    <h3 class="text-2xl font-bold font-display text-choco mb-2">Your Dream Sundae</h3>
+                    <p class="text-xs text-gray-500 mb-6">Real-time preview and custom pricing calculation.</p>
+                    
+                    <div class="space-y-4 mb-6 bg-white/80 backdrop-blur-sm p-5 rounded-2xl">
+                        <div>
+                            <span class="text-xs uppercase font-semibold text-gray-400">Selected Bases:</span>
+                            <div id="summary-bases" class="font-medium text-choco text-sm min-h-[24px]">None selected yet</div>
+                        </div>
+                        <div>
+                            <span class="text-xs uppercase font-semibold text-gray-400">Toppings:</span>
+                            <div id="summary-toppings" class="font-medium text-choco text-sm min-h-[24px]">None selected</div>
+                        </div>
+                        <div>
+                            <span class="text-xs uppercase font-semibold text-gray-400">Drizzle:</span>
+                            <div id="summary-drizzle" class="font-medium text-choco text-sm min-h-[24px]">None selected</div>
+                        </div>
+                        <div class="pt-4 border-t border-gray-200 flex justify-between items-center">
+                            <span class="font-bold text-lg text-choco">Total Price:</span>
+                            <span id="summary-price" class="text-2xl font-bold text-strawberry">$4.00</span>
+                        </div>
+                    </div>
+
+                    <button onclick="orderCustomSundae()" class="w-full bg-strawberry text-white py-4 rounded-2xl font-semibold hover:bg-opacity-90 transition shadow-lg flex items-center justify-center gap-2">
+                        <i data-lucide="shopping-bag" class="w-5 h-5"></i> Order Custom Sundae
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials / Customer Reviews Section -->
+    <section id="reviews" class="py-20 bg-cream">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16 space-y-4">
+                <span class="text-strawberry font-semibold uppercase tracking-wider text-sm bg-softPink/50 px-4 py-1 rounded-full">Happy Customers</span>
+                <h2 class="text-3xl sm:text-5xl font-display font-bold text-choco">What Sweet Lovers Say</h2>
+                <p class="text-gray-600">Read glowing reviews from our lovely community of ice cream enthusiasts.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Review 1 -->
+                <div class="bg-white p-8 rounded-3xl custom-shadow relative flex flex-col justify-between">
+                    <div>
+                        <div class="flex text-amber-400 gap-1 mb-4">
+                            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+                        </div>
+                        <p class="text-gray-600 italic mb-6">"The Berry Velvet Dream sundae literally melted in my mouth. The atmosphere is so cozy and charming. My absolute favorite spot in town!"</p>
+                    </div>
+                    <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+                        <img src="https://placehold.co/100x100/FFD1DC/4A3525?text=SJ" alt="Sarah Johnson" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <h4 class="font-bold text-choco">Sarah Johnson</h4>
+                            <p class="text-xs text-gray-400">Verified Sweet Tooth</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="bg-white p-8 rounded-3xl custom-shadow relative flex flex-col justify-between">
+                    <div>
+                        <div class="flex text-amber-400 gap-1 mb-4">
+                            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+                        </div>
+                        <p class="text-gray-600 italic mb-6">"Their vegan pistachio coconut flavor is mind-blowing! You honestly couldn't tell it's dairy-free. Incredible service and friendly staff."</p>
+                    </div>
+                    <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+                        <img src="https://placehold.co/100x100/E2F0D9/4A3525?text=MR" alt="Michael Ruiz" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <h4 class="font-bold text-choco">Michael Ruiz</h4>
+                            <p class="text-xs text-gray-400">Vegan Food Blogger</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 3 -->
+                <div class="bg-white p-8 rounded-3xl custom-shadow relative flex flex-col justify-between">
+                    <div>
+                        <div class="flex text-amber-400 gap-1 mb-4">
+                            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+                        </div>
+                        <p class="text-gray-600 italic mb-6">"Building my own custom sundae was such a fun experience with my kids. The chocolate fudge drizzle is top tier. 10/10 recommend!"</p>
+                    </div>
+                    <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+                        <img src="https://placehold.co/100x100/FFF1C1/4A3525?text=EC" alt="Emily Carter" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <h4 class="font-bold text-choco">Emily Carter</h4>
+                            <p class="text-xs text-gray-400">Local Mother & Regular</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Reservation Form Section -->
+    <section id="contact" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <span class="text-strawberry font-semibold uppercase tracking-wider text-sm bg-softPink/50 px-4 py-1 rounded-full">Visit Or Reserve</span>
+                    <h2 class="text-3xl sm:text-5xl font-display font-bold text-choco">Come Taste the Magic</h2>
+                    <p class="text-gray-600">Have a question, want to book a party table, or place a bulk catering order? Drop us a line or visit our parlor today!</p>
+                    
+                    <div class="space-y-4 pt-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-softPink flex items-center justify-center text-strawberry shrink-0">
+                                <i data-lucide="map-pin" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-choco">Location</h4>
+                                <p class="text-sm text-gray-500">123 Sweet Scoop Avenue, Sugarland, CA 90210</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-mintGreen flex items-center justify-center text-emerald-700 shrink-0">
+                                <i data-lucide="clock" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-choco">Hours</h4>
+                                <p class="text-sm text-gray-500">Mon - Sun: 11:00 AM – 10:00 PM</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-buttercup flex items-center justify-center text-amber-700 shrink-0">
+                                <i data-lucide="phone" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-choco">Phone</h4>
+                                <p class="text-sm text-gray-500">+1 (555) 321-7890</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Card -->
+                <div class="bg-cream p-8 sm:p-10 rounded-3xl border border-softPink custom-shadow">
+                    <h3 class="text-2xl font-bold font-display text-choco mb-6">Send Us a Message / Reservation</h3>
+                    <form id="contact-form" onsubmit="handleContactSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Your Name</label>
+                            <input type="text" id="contact-name" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-strawberry bg-white transition" placeholder="John Doe">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Email Address</label>
+                            <input type="email" id="contact-email" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-strawberry bg-white transition" placeholder="john@example.com">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Inquiry Type</label>
+                            <select id="contact-type" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-strawberry bg-white transition">
+                                <option>General Inquiry</option>
+                                <option>Table Reservation</option>
+                                <option>Catering / Party Order</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Message</label>
+                            <textarea id="contact-msg" rows="4" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-strawberry bg-white transition" placeholder="Tell us how we can make your day sweeter..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-strawberry text-white py-4 rounded-xl font-semibold hover:bg-opacity-90 transition shadow-md">
+                            Submit Request
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-choco text-cream py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+                <div class="space-y-4 md:col-span-1">
+                    <div class="flex items-center gap-2">
+                        <div class="w-9 h-9 bg-softPink rounded-full flex items-center justify-center text-strawberry">
+                            <i data-lucide="ice-cream-2" class="w-5 h-5"></i>
+                        </div>
+                        <span class="font-display text-2xl text-softPink">Frosty Dreams</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Crafting artisanal small-batch happiness since 2018. Made with love and the finest organic ingredients.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold font-display text-softPink mb-4 text-lg">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><a href="#hero" class="hover:text-softPink transition">Home</a></li>
+                        <li><a href="#about" class="hover:text-softPink transition">Our Story</a></li>
+                        <li><a href="#menu" class="hover:text-softPink transition">Menu</a></li>
+                        <li><a href="#builder" class="hover:text-softPink transition">Sundae Builder</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold font-display text-softPink mb-4 text-lg">Flavors</h4>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><a href="#menu" class="hover:text-softPink transition">Classic Vanilla Bean</a></li>
+                        <li><a href="#menu" class="hover:text-softPink transition">Belgian Dark Chocolate</a></li>
+                        <li><a href="#menu" class="hover:text-softPink transition">Vegan Pistachio Coconut</a></li>
+                        <li><a href="#menu" class="hover:text-softPink transition">Strawberry Cheesecake</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold font-display text-softPink mb-4 text-lg">Newsletter</h4>
+                    <p class="text-sm text-gray-400 mb-4">Subscribe to get secret flavor drops and weekly discount coupons.</p>
+                    <div class="flex gap-2">
+                        <input type="email" placeholder="Your email" class="bg-white/10 px-4 py-2.5 rounded-xl text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-softPink w-full">
+                        <button onclick="showModal('Subscribed!', 'Thank you for subscribing! Check your inbox for your welcome coupon.')" class="bg-strawberry text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-opacity-95 transition">Join</button>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400">
+                <p>&copy; 2026 Frosty Dreams Ice Cream Parlor. All rights reserved.</p>
+                <div class="flex gap-6 mt-4 sm:mt-0">
+                    <a href="#" class="hover:text-softPink transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-softPink transition">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Menu Dataset
+        const menuItems = [
+            {
+                id: 1,
+                name: "Madagascar Vanilla Bean",
+                category: "classic",
+                price: "$4.00",
+                rawPrice: 4.00,
+                desc: "Rich, creamy traditional vanilla made with authentic imported pods.",
+                image: "https://placehold.co/400x300/FFF1C1/4A3525?text=Vanilla+Bean",
+                badge: "Classic"
+            },
+            {
+                id: 2,
+                name: "Belgian Dark Chocolate",
+                category: "classic",
+                price: "$4.50",
+                rawPrice: 4.50,
+                desc: "Deep, velvety chocolate crafted from 72% Belgian cocoa blocks.",
+                image: "https://placehold.co/400x300/4A3525/FFF1C1?text=Dark+Chocolate",
+                badge: "Bestseller"
+            },
+            {
+                id: 3,
+                name: "Berry Velvet Dream",
+                category: "sundae",
+                price: "$6.50",
+                rawPrice: 6.50,
+                desc: "Vanilla bean with wild strawberry swirl, whipped cream, and gold dust.",
+                image: "https://placehold.co/400x300/FFD1DC/4A3525?text=Berry+Sundae",
+                badge: "Chef's Pick"
+            },
+            {
+                id: 4,
+                name: "Caramel Pecan Crunch",
+                category: "sundae",
+                price: "$6.75",
+                rawPrice: 6.75,
+                desc: "Butter pecan ice cream layered with salted caramel and roasted pecans.",
+                image: "https://placehold.co/400x300/FFF1C1/4A3525?text=Caramel+Sundae",
+                badge: "Popular"
+            },
+            {
+                id: 5,
+                name: "Vegan Pistachio Coconut",
+                category: "vegan",
+                price: "$5.00",
+                rawPrice: 5.00,
+                desc: "Creamy coconut milk base infused with roasted Sicilian pistachios.",
+                image: "https://placehold.co/400x300/E2F0D9/4A3525?text=Vegan+Pistachio",
+                badge: "Dairy-Free"
+            },
+            {
+                id: 6,
+                name: "Vegan Mango Passionfruit",
+                category: "vegan",
+                price: "$4.75",
+                rawPrice: 4.75,
+                desc: "Refreshing Alphonso mango sorbet blended with tropical passionfruit.",
+                image: "https://placehold.co/400x300/FFD1DC/4A3525?text=Mango+Sorbet",
+                badge: "Vegan"
+            },
+            {
+                id: 7,
+                name: "Strawberry Shake Deluxe",
+                category: "shake",
+                price: "$6.25",
+                rawPrice: 6.25,
+                desc: "Thick hand-spun milkshake topped with fresh whipped cream and a cherry.",
+                image: "https://placehold.co/400x300/FFD1DC/4A3525?text=Strawberry+Shake",
+                badge: "Shake"
+            },
+            {
+                id: 8,
+                name: "Oreo Cookie Monster Shake",
+                category: "shake",
+                price: "$6.90",
+                rawPrice: 6.90,
+                desc: "Loaded chocolate shake blended with crushed Oreos and chocolate fudge.",
+                image: "https://placehold.co/400x300/4A3525/FFF1C1?text=Oreo+Shake",
+                badge: "Favorite"
+            }
+        ];
+
+        // Render Menu Grid
+        function renderMenu(category = 'all') {
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = '';
+
+            const filtered = category === 'all' ? menuItems : menuItems.filter(item => item.category === category);
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-3xl overflow-hidden custom-shadow border border-gray-100 flex flex-col justify-between group hover:-translate-y-1 transition duration-300';
+                card.innerHTML = `
+                    <div class="relative h-48 overflow-hidden bg-gray-100">
+                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <span class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold text-strawberry shadow">
+                            ${item.badge}
+                        </span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold font-display text-lg text-choco">${item.name}</h3>
+                                <span class="font-bold text-strawberry">${item.price}</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mb-4">${item.desc}</p>
+                        </div>
+                        <button onclick="quickAdd('${item.name}', ${item.rawPrice})" class="w-full bg-softPink/50 text-choco py-2.5 rounded-xl font-medium text-sm hover:bg-strawberry hover:text-white transition flex items-center justify-center gap-1.5">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Add to Order
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        // Filter Menu Tabs
+        function filterMenu(category) {
+            document.querySelectorAll('.menu-tab').forEach(btn => {
+                btn.className = 'menu-tab px-6 py-2.5 rounded-full font-medium transition bg-white text-choco hover:bg-softPink/50 shadow-sm';
+            });
+            event.target.className = 'menu-tab px-6 py-2.5 rounded-full font-medium transition bg-strawberry text-white shadow-md';
+            renderMenu(category);
+        }
+
+        // Initial menu render
+        renderMenu('all');
+
+        // Sundae Builder Data & State
+        const builderData = {
+            bases: [
+                { id: 'b1', name: 'Madagascar Vanilla', price: 2.50 },
+                { id: 'b2', name: 'Belgian Chocolate', price: 2.75 },
+                { id: 'b3', name: 'Wild Strawberry', price: 2.60 },
+                { id: 'b4', name: 'Mint Choc Chip', price: 2.75 },
+                { id: 'b5', name: 'Vegan Coconut', price: 3.00 },
+                { id: 'b6', name: 'Butter Pecan', price: 2.85 }
+            ],
+            toppings: [
+                { id: 't1', name: 'Hot Fudge', price: 0.75 },
+                { id: 't2', name: 'Crushed Oreos', price: 0.50 },
+                { id: 't3', name: 'Sprinkles', price: 0.30 },
+                { id: 't4', name: 'Whipped Cream', price: 0.50 },
+                { id: 't5', name: 'Roasted Almonds', price: 0.75 },
+                { id: 't6', name: 'Maraschino Cherry', price: 0.40 }
+            ],
+            drizzles: [
+                { id: 'd1', name: 'Salted Caramel', price: 0.60 },
+                { id: 'd2', name: 'Raspberry Coulis', price: 0.60 },
+                { id: 'd3', name: 'Rich Chocolate Ganache', price: 0.70 },
+                { id: 'd4', name: 'Honey Drizzle', price: 0.50 }
+            ]
+        };
+
+        let selectedBases = []; // Max 3
+        let selectedToppings = []; // Multiple
+        let selectedDrizzle = null; // Single
+
+        function initBuilder() {
+            // Render Bases
+            const baseContainer = document.getElementById('builder-bases');
+            baseContainer.innerHTML = '';
+            builderData.bases.forEach(b => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.id = `base-${b.id}`;
+                btn.className = 'p-3 rounded-2xl border border-gray-200 bg-white text-left transition hover:border-strawberry text-sm font-medium flex flex-col justify-between';
+                btn.innerHTML = `<span class="font-bold text-choco">${b.name}</span><span class="text-xs text-strawberry">+$${b.price.toFixed(2)}</span>`;
+                btn.onclick = () => toggleBase(b);
+                baseContainer.appendChild(btn);
+            });
+
+            // Render Toppings
+            const topContainer = document.getElementById('builder-toppings');
+            topContainer.innerHTML = '';
+            builderData.toppings.forEach(t => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.id = `top-${t.id}`;
+                btn.className = 'p-3 rounded-2xl border border-gray-200 bg-white text-left transition hover:border-strawberry text-sm font-medium flex flex-col justify-between';
+                btn.innerHTML = `<span class="font-bold text-choco">${t.name}</span><span class="text-xs text-strawberry">+$${t.price.toFixed(2)}</span>`;
+                btn.onclick = () => toggleTopping(t);
+                topContainer.appendChild(btn);
+            });
+
+            // Render Drizzles
+            const drizContainer = document.getElementById('builder-drizzles');
+            drizContainer.innerHTML = '';
+            builderData.drizzles.forEach(d => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.id = `driz-${d.id}`;
+                btn.className = 'p-3 rounded-2xl border border-gray-200 bg-white text-left transition hover:border-strawberry text-sm font-medium flex flex-col justify-between';
+                btn.innerHTML = `<span class="font-bold text-choco">${d.name}</span><span class="text-xs text-strawberry">+$${d.price.toFixed(2)}</span>`;
+                btn.onclick = () => selectDrizzle(d);
+                drizContainer.appendChild(btn);
+            });
+
+            updateBuilderSummary();
+        }
+
+        function toggleBase(base) {
+            const index = selectedBases.findIndex(b => b.id === base.id);
+            const btn = document.getElementById(`base-${base.id}`);
+            if (index > -1) {
+                selectedBases.splice(index, 1);
+                btn.classList.remove('border-strawberry', 'bg-softPink/20');
+            } else {
+                if (selectedBases.length >= 3) {
+                    showModal('Maximum Scoops', 'You can select up to 3 base scoops for your sundae!');
+                    return;
+                }
+                selectedBases.push(base);
+                btn.classList.add('border-strawberry', 'bg-softPink/20');
+            }
+            updateBuilderSummary();
+        }
+
+        function toggleTopping(topping) {
+            const index = selectedToppings.findIndex(t => t.id === topping.id);
+            const btn = document.getElementById(`top-${topping.id}`);
+            if (index > -1) {
+                selectedToppings.splice(index, 1);
+                btn.classList.remove('border-strawberry', 'bg-softPink/20');
+            } else {
+                selectedToppings.push(topping);
+                btn.classList.add('border-strawberry', 'bg-softPink/20');
+            }
+            updateBuilderSummary();
+        }
+
+        function selectDrizzle(drizzle) {
+            // Remove previous active state
+            builderData.drizzles.forEach(d => {
+                const b = document.getElementById(`driz-${d.id}`);
+                if (b) b.classList.remove('border-strawberry', 'bg-softPink/20');
+            });
+
+            if (selectedDrizzle && selectedDrizzle.id === drizzle.id) {
+                selectedDrizzle = null;
+            } else {
+                selectedDrizzle = drizzle;
+                const btn = document.getElementById(`driz-${drizzle.id}`);
+                btn.classList.add('border-strawberry', 'bg-softPink/20');
+            }
+            updateBuilderSummary();
+        }
+
+        function updateBuilderSummary() {
+            const baseDiv = document.getElementById('summary-bases');
+            const topDiv = document.getElementById('summary-toppings');
+            const drizDiv = document.getElementById('summary-drizzle');
+            const priceDiv = document.getElementById('summary-price');
+
+            let total = 2.00; // base bowl starting fee
+
+            if (selectedBases.length > 0) {
+                baseDiv.innerHTML = selectedBases.map(b => `${b.name} (+$${b.price.toFixed(2)})`).join(', ');
+                total += selectedBases.reduce((sum, b) => sum + b.price, 0);
+            } else {
+                baseDiv.innerHTML = '<span class="text-gray-400">None selected yet</span>';
+            }
+
+            if (selectedToppings.length > 0) {
+                topDiv.innerHTML = selectedToppings.map(t => `${t.name} (+$${t.price.toFixed(2)})`).join(', ');
+                total += selectedToppings.reduce((sum, t) => sum + t.price, 0);
+            } else {
+                topDiv.innerHTML = '<span class="text-gray-400">None selected</span>';
+            }
+
+            if (selectedDrizzle) {
+                drizDiv.innerHTML = `${selectedDrizzle.name} (+$${selectedDrizzle.price.toFixed(2)})`;
+                total += selectedDrizzle.price;
+            } else {
+                drizDiv.innerHTML = '<span class="text-gray-400">None selected</span>';
+            }
+
+            priceDiv.innerHTML = `$${total.toFixed(2)}`;
+        }
+
+        // Initialize builder on load
+        initBuilder();
+
+        // Quick add from menu
+        function quickAdd(itemName, price) {
+            showModal('Added to Cart!', `Successfully added 1x ${itemName} ($${price.toFixed(2)}) to your sweet order.`);
+        }
+
+        // Order custom sundae
+        function orderCustomSundae() {
+            if (selectedBases.length === 0) {
+                showModal('Please Choose Base', 'You must select at least one base scoop for your custom sundae!', true);
+                return;
+            }
+            showModal('Sundae Ordered!', 'Your masterpiece custom sundae has been successfully ordered and is being whipped up!');
+        }
+
+        // Contact form submission handler
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('contact-name').value;
+            showModal('Request Received!', `Thank you ${name}! We have received your message/reservation and will get back to you shortly.`);
+            document.getElementById('contact-form').reset();
+        }
+
+        // Custom Modal Functions (Replaces alert())
+        function showModal(title, message, isError = false) {
+            const modal = document.getElementById('notification-modal');
+            const modalContent = document.getElementById('modal-content');
+            const modalTitle = document.getElementById('modal-title');
+            const modalMessage = document.getElementById('modal-message');
+            const modalIcon = document.getElementById('modal-icon');
+
+            modalTitle.innerText = title;
+            modalMessage.innerText = message;
+
+            if (isError) {
+                modalIcon.className = 'w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-600';
+                modalIcon.innerHTML = '<i data-lucide="alert-circle" class="w-8 h-8"></i>';
+            } else {
+                modalIcon.className = 'w-16 h-16 bg-softPink rounded-full flex items-center justify-center mx-auto mb-4 text-strawberry';
+                modalIcon.innerHTML = '<i data-lucide="check-circle" class="w-8 h-8"></i>';
+            }
+            lucide.createIcons();
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('notification-modal');
+            const modalContent = document.getElementById('modal-content');
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+    </script>
+</body>
+</html>
